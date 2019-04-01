@@ -1,0 +1,2 @@
+# autoc
+auto config
