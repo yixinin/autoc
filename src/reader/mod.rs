@@ -3,7 +3,8 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
-pub fn ReadFile(filename: &str) -> String {
+//读取文本内容
+pub fn read_file(filename: &str) -> String {
     let path = Path::new(filename);
     let display = path.display();
 

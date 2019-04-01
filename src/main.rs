@@ -1,5 +1,5 @@
 mod reader;
 fn main() {
-    let text = reader::ReadFile("hello.txt");
+    let text = reader::read_file("hello.txt");
     println!("{}", text)
 }
