@@ -1,34 +1,43 @@
-mod reader;
-mod threadpool;
+// mod config;
+// mod engine;
+// mod reader;
+// mod threadpool;
 
-use std::fs;
+extern crate serde;
+extern crate serde_json;
+
+use autoc::config;
+use autoc::threadpool::ThreadPool;
 use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
-use std::thread;
-use std::time::Duration;
-use threadpool::ThreadPool;
+
+use serde::{Deserialize, Serialize};
+use serde_json::Result;
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
-    let pool = ThreadPool::new(4);
+    // config::load_config();
+    // let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    // let pool = ThreadPool::new(4);
 
-    for stream in listener.incoming().take(2) {
-        let stream = stream.unwrap();
+    // for stream in listener.incoming().take(2) {
+    //     let stream = stream.unwrap();
 
-        pool.execute(|| {
-            handle_connection(stream);
-        });
-    }
+    //     pool.execute(|| {
+    //         handle_connection(stream);
+    //     });
+    // }
 
-    println!("Shutting down.");
+    // println!("Shutting down.");
+    let arr: Vec<u32> = serde_json::from_str("[10,12]").unwrap();
+    println!("{:?}", arr);
 }
 
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 512];
     stream.read(&mut buffer).unwrap();
 
-    let url = "ac://yixin:0000@127.0.0.1:95328/zlab";
+    let _url = "ac://yixin:0000@127.0.0.1:95328/zlab";
 
     let ac = b"ac://";
 
