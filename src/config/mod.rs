@@ -1,7 +1,11 @@
-use crate::reader;
+use crate::acio;
 pub fn load_config() {
-    let text = reader::read_file("conf/config.toml");
-    if text == String::from("") {
-        panic!("config not found !")
+    match acio::read_file("conf/config.toml") {
+        Err(why) => panic!("load config error {}", why),
+        Ok(s) => {
+            println!("{}", s);
+            //TODO config
+            println!("load success")
+        }
     }
 }

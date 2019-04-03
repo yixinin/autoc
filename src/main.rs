@@ -15,6 +15,8 @@ use std::net::TcpStream;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 
+use autoc::acio;
+
 fn main() {
     // config::load_config();
     // let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
@@ -29,8 +31,14 @@ fn main() {
     // }
 
     // println!("Shutting down.");
-    let arr: Vec<u32> = serde_json::from_str("[10,12]").unwrap();
-    println!("{:?}", arr);
+    let filename = String::from("hello.ac");
+    let content = "hello world";
+    let buf = content.as_bytes();
+    println!("buf:{:?}", buf);
+    let size = buf.len();
+    let success = acio::write(filename, buf).unwrap();
+    let data = acio::read(String::from("hello.ac"), size).unwrap();
+    println!("data:{:?}", data);
 }
 
 fn handle_connection(mut stream: TcpStream) {

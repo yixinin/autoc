@@ -23,19 +23,9 @@ impl Engine {
       }
    }
 
-   pub fn set<T>(&mut self, key: String, value: T)
-   where
-      T: Acon<T>,
-   {
-      self.keymap.insert(
-         key,
-         ValueInfo {
-            length: 0,
-            start: 0,
-         },
-      );
-      let s = value.to_string();
-      println!("{}", s)
+   //存储 key:文件名称 value 文件类容
+   pub fn set<T>(&mut self, key: String, value: Vec<u8>) {
+
    }
 
    pub fn get<T>(self, key: String) -> T
@@ -44,4 +34,4 @@ impl Engine {
    {
       T::from_string(key)
    }
-}
+} 
