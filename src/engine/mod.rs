@@ -9,6 +9,7 @@ use acon::Acon;
 
 pub struct Engine {
    pub filename: String,
+   pub current: usize,
    pub keymap: HashMap<String, usize>,
 }
 
@@ -17,6 +18,7 @@ impl Engine {
       Engine {
          filename: String::from(filename),
          keymap: HashMap::new(),
+         current: reader::read_len(String::from(filename)).unwrap(),
       }
    }
 
@@ -35,10 +37,13 @@ impl Engine {
       for b in data {
          buf.push(*b);
       }
+
+      println!("{:?}", &buf);
       match writer::write_append(self.filename.clone(), &buf) {
          Err(_) => (),
          Ok(off) => {
-            self.keymap.insert(key, off);
+            self.current += length + 4;
+            self.keymap.insert(key, self.current);
             ()
          }
       };

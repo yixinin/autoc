@@ -46,9 +46,10 @@ pub fn read(filename: String) -> Result<Vec<u8>, std::io::Error> {
 }
 
 pub fn read_at(filename: String, offset: u64) -> Result<Vec<u8>, std::io::Error> {
+    println!("read at {}", offset);
     let path = Path::new(&filename);
     // Open the path in read-only mode, returns `io::Result<File>`
-    match File::open(&path) {
+    match std::fs::OpenOptions::new().read(true).open(&path) {
         // The `description` method of `io::Error` returns a string that
         // describes the error
         Err(why) => Err(why),
@@ -57,14 +58,15 @@ pub fn read_at(filename: String, offset: u64) -> Result<Vec<u8>, std::io::Error>
             match file.read_exact(&mut hbuf) {
                 Err(e) => Err(e),
                 Ok(_) => {
+                    if offset != 0 {
+                        file.seek(std::io::SeekFrom::Start(offset)).unwrap();
+                    }
                     let size = unsafe { std::mem::transmute::<[u8; 4], u32>(hbuf) };
                     let mut buf: Vec<u8> = Vec::with_capacity(size as usize);
 
                     fill_vec(&mut buf, size as usize);
-
-                    if offset != 0 {
-                        file.seek(std::io::SeekFrom::Start(offset)).unwrap();
-                    }
+                    file.seek(std::io::SeekFrom::Current(0 - size as i64))
+                        .unwrap();
                     match file.read_exact(&mut buf) {
                         Err(why) => Err(why),
                         Ok(_) => Ok(buf),
@@ -72,5 +74,13 @@ pub fn read_at(filename: String, offset: u64) -> Result<Vec<u8>, std::io::Error>
                 }
             }
         }
+    }
+}
+
+pub fn read_len(filename: String) -> Result<usize, std::io::Error> {
+    let path = Path::new(&filename);
+    match std::fs::metadata(path) {
+        Err(e) => Err(e),
+        Ok(metadata) => Ok(metadata.len() as usize),
     }
 }

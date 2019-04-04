@@ -41,8 +41,8 @@ pub fn write_at(filename: String, value: &[u8], offset: u64) -> Result<bool, std
 pub fn write_append(filename: String, value: &[u8]) -> Result<usize, std::io::Error> {
     let path = Path::new(&filename);
     match std::fs::OpenOptions::new()
-        .write(true)
         .create(true)
+        .write(true)
         .append(true)
         .open(path)
     {
@@ -78,6 +78,7 @@ fn file_append(file: &mut File, value: &[u8]) -> Result<usize, std::io::Error> {
         }
         Ok(off) => {
             file.flush().ok();
+            println!("write len {}", off);
             Ok(off)
         }
     }

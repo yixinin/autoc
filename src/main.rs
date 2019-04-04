@@ -33,10 +33,12 @@ fn main() {
 
     // println!("Shutting down.");
 
+    let mut buf = String::from("hello").as_bytes();
+
     let mut eng = engine::Engine::new("zlab.ac");
     eng.set(String::from("name"), String::from("yixin"));
     let value = eng.get(String::from("name"));
-    println!("{}", value);
+    println!("={}=", value);
 }
 
 fn handle_connection(mut stream: TcpStream) {
