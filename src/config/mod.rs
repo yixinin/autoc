@@ -1,6 +1,6 @@
-use crate::acio;
+use crate::acio::reader;
 pub fn load_config() {
-    match acio::read_file("conf/config.toml") {
+    match reader::read_file("conf/config.toml") {
         Err(why) => panic!("load config error {}", why),
         Ok(s) => {
             println!("{}", s);

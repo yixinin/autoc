@@ -15,7 +15,8 @@ use std::net::TcpStream;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 
-use autoc::acio;
+use autoc::acio::{reader, writer};
+use autoc::engine;
 
 fn main() {
     // config::load_config();
@@ -31,14 +32,11 @@ fn main() {
     // }
 
     // println!("Shutting down.");
-    let filename = String::from("hello.ac");
-    let content = "hello world";
-    let buf = content.as_bytes();
-    println!("buf:{:?}", buf);
-    let size = buf.len();
-    let success = acio::write(filename, buf).unwrap();
-    let data = acio::read(String::from("hello.ac"), size).unwrap();
-    println!("data:{:?}", data);
+
+    let mut eng = engine::Engine::new("zlab.ac");
+    eng.set(String::from("name"), String::from("yixin"));
+    let value = eng.get(String::from("name"));
+    println!("{}", value);
 }
 
 fn handle_connection(mut stream: TcpStream) {
@@ -54,7 +52,7 @@ fn handle_connection(mut stream: TcpStream) {
         contents = String::from("unkown connection")
     } else {
         //检查用户名密码
-
+        println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
         //TODO 检查文件是否存在
         contents = String::from("unkown connection")
     }
