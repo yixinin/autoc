@@ -36,9 +36,11 @@ fn main() {
     let mut buf = String::from("hello").as_bytes();
 
     let mut eng = engine::Engine::new("zlab.ac");
-    eng.set(String::from("name"), String::from("yixin"));
-    let value = eng.get(String::from("name"));
+    eng.set(String::from("nickname"), String::from("yixin"));
+    let value = eng.get(String::from("nickname"));
     println!("={}=", value);
+    let fl = reader::read_len(String::from("zlab.ac")).unwrap();
+    println!("file size:{}", fl);
 }
 
 fn handle_connection(mut stream: TcpStream) {

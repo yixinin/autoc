@@ -14,7 +14,7 @@ pub fn read_file(filename: &str) -> Result<String, std::io::Error> {
         Ok(mut file) => {
             // Read the file contents into a string, returns `io::Result<usize>`
             let mut s: String = String::new();
-            file.read_to_string(&mut s).unwrap();
+            file.read_to_string(&mut s)?;
             Ok(s)
         }
     }
@@ -46,7 +46,6 @@ pub fn read(filename: String) -> Result<Vec<u8>, std::io::Error> {
 }
 
 pub fn read_at(filename: String, offset: u64) -> Result<Vec<u8>, std::io::Error> {
-    println!("read at {}", offset);
     let path = Path::new(&filename);
     // Open the path in read-only mode, returns `io::Result<File>`
     match std::fs::OpenOptions::new().read(true).open(&path) {
@@ -59,14 +58,16 @@ pub fn read_at(filename: String, offset: u64) -> Result<Vec<u8>, std::io::Error>
                 Err(e) => Err(e),
                 Ok(_) => {
                     if offset != 0 {
-                        file.seek(std::io::SeekFrom::Start(offset)).unwrap();
+                        let cursor = file.seek(std::io::SeekFrom::Current(offset as i64))?;
+                        println!("curosr:{}", cursor);
                     }
                     let size = unsafe { std::mem::transmute::<[u8; 4], u32>(hbuf) };
+                    println!("buf len {}", size);
                     let mut buf: Vec<u8> = Vec::with_capacity(size as usize);
 
                     fill_vec(&mut buf, size as usize);
-                    file.seek(std::io::SeekFrom::Current(0 - size as i64))
-                        .unwrap();
+                    let cursor = file.seek(std::io::SeekFrom::Current(0))?;
+                    println!("curosr:{}", cursor);
                     match file.read_exact(&mut buf) {
                         Err(why) => Err(why),
                         Ok(_) => Ok(buf),

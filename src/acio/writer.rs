@@ -3,7 +3,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 //直接写入
-pub fn write(filename: String, value: &[u8]) -> Result<bool, std::io::Error> {
+pub fn write(filename: String, value: &[u8]) -> Result<(), std::io::Error> {
     let path = Path::new(&filename);
     match std::fs::OpenOptions::new()
         .write(true)
@@ -13,14 +13,11 @@ pub fn write(filename: String, value: &[u8]) -> Result<bool, std::io::Error> {
         // The `description` method of `io::Error` returns a string that
         // describes the error
         Err(why) => Err(why),
-        Ok(ref mut file) => {
-            file_write(file, value, 0)?;
-            Ok(true)
-        }
+        Ok(ref mut file) => file_write(file, value, 0),
     }
 }
 //在指定位置写入
-pub fn write_at(filename: String, value: &[u8], offset: u64) -> Result<bool, std::io::Error> {
+pub fn write_at(filename: String, value: &[u8], offset: u64) -> Result<(), std::io::Error> {
     let path = Path::new(&filename);
     match std::fs::OpenOptions::new()
         .write(true)
@@ -30,15 +27,12 @@ pub fn write_at(filename: String, value: &[u8], offset: u64) -> Result<bool, std
         // The `description` method of `io::Error` returns a string that
         // describes the error
         Err(why) => Err(why),
-        Ok(ref mut file) => {
-            file_write(file, value, offset)?;
-            Ok(true)
-        }
+        Ok(ref mut file) => file_write(file, value, offset),
     }
 }
 
 //追加写入
-pub fn write_append(filename: String, value: &[u8]) -> Result<usize, std::io::Error> {
+pub fn write_append(filename: String, value: &[u8]) -> Result<(), std::io::Error> {
     let path = Path::new(&filename);
     match std::fs::OpenOptions::new()
         .create(true)
@@ -53,9 +47,9 @@ pub fn write_append(filename: String, value: &[u8]) -> Result<usize, std::io::Er
     }
 }
 
-fn file_write(file: &mut File, value: &[u8], offset: u64) -> Result<bool, std::io::Error> {
+fn file_write(file: &mut File, value: &[u8], offset: u64) -> Result<(), std::io::Error> {
     if offset != 0 {
-        file.seek(std::io::SeekFrom::Start(offset)).unwrap();
+        file.seek(std::io::SeekFrom::Start(offset))?;
     }
 
     match file.write(value) {
@@ -63,23 +57,16 @@ fn file_write(file: &mut File, value: &[u8], offset: u64) -> Result<bool, std::i
             println!("write file error {}", why);
             Err(why)
         }
-        Ok(_) => {
-            file.flush().ok();
-            Ok(true)
-        }
+        Ok(_) => file.sync_all(),
     }
 }
 
-fn file_append(file: &mut File, value: &[u8]) -> Result<usize, std::io::Error> {
+fn file_append(file: &mut File, value: &[u8]) -> Result<(), std::io::Error> {
     match file.write(value) {
         Err(why) => {
             println!("write file error {}", why);
             Err(why)
         }
-        Ok(off) => {
-            file.flush().ok();
-            println!("write len {}", off);
-            Ok(off)
-        }
+        Ok(_) => file.sync_all(),
     }
 }

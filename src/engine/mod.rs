@@ -18,7 +18,10 @@ impl Engine {
       Engine {
          filename: String::from(filename),
          keymap: HashMap::new(),
-         current: reader::read_len(String::from(filename)).unwrap(),
+         current: match reader::read_len(String::from(filename)) {
+            Err(_) => 0,
+            Ok(size) => size,
+         },
       }
    }
 
@@ -40,11 +43,10 @@ impl Engine {
 
       println!("{:?}", &buf);
       match writer::write_append(self.filename.clone(), &buf) {
-         Err(_) => (),
-         Ok(off) => {
-            self.current += length + 4;
+         Err(why) => println!("write file error {}", why),
+         Ok(_) => {
             self.keymap.insert(key, self.current);
-            ()
+            self.current += length + 4;
          }
       };
    }
