@@ -6,7 +6,7 @@ use serde_json::Result;
 use std::collections::HashMap;
 
 use acon::Acon;
-
+#[derive(Debug, Copy, Clone)]
 pub struct Engine {
    pub filename: String,
    pub current: usize,
@@ -59,5 +59,11 @@ impl Engine {
             Ok(value) => String::from_utf8_lossy(&value).as_ref().to_string(),
          },
       }
+   }
+}
+impl Copy for Engine {}
+impl Clone for Engine {
+   fn clone(&self) -> Engine {
+      *self
    }
 }

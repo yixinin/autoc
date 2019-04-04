@@ -32,15 +32,15 @@ fn main() {
     // }
 
     // println!("Shutting down.");
-
-    let mut buf = String::from("hello").as_bytes();
-
     let mut eng = engine::Engine::new("zlab.ac");
-    eng.set(String::from("nickname"), String::from("yixin"));
-    let value = eng.get(String::from("nickname"));
-    println!("={}=", value);
-    let fl = reader::read_len(String::from("zlab.ac")).unwrap();
-    println!("file size:{}", fl);
+    for i in 1..10 {
+        eng.set(format!("{}{}{}", i, i, i), format!("{}{}{}", i, i, i));
+        let value = eng.get(format!("{}{}{}", i, i, i));
+        println!("={}=", value);
+        let fl = reader::read_len(String::from("zlab.ac")).unwrap();
+        println!("file size:{}", fl);
+        println!("");
+    }
 }
 
 fn handle_connection(mut stream: TcpStream) {
