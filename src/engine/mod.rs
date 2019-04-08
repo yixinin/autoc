@@ -6,7 +6,7 @@ use serde_json::Result;
 use std::collections::HashMap;
 
 use acon::Acon;
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Engine {
    pub filename: String,
    pub current: usize,
@@ -42,7 +42,7 @@ impl Engine {
       }
 
       println!("{:?}", &buf);
-      match writer::write_append(self.filename.clone(), &buf) {
+      match writer::write_append(&self.filename, &buf) {
          Err(why) => println!("write file error {}", why),
          Ok(_) => {
             self.keymap.insert(key, self.current);
@@ -51,19 +51,13 @@ impl Engine {
       };
    }
 
-   pub fn get(self, key: String) -> String {
+   pub fn get(&self, key: String) -> String {
       match self.keymap.get(&key) {
          None => String::from(""),
-         Some(off) => match reader::read_at(self.filename, *off as u64) {
+         Some(off) => match reader::read_at(&self.filename, *off as u64) {
             Err(_) => String::from(""),
             Ok(value) => String::from_utf8_lossy(&value).as_ref().to_string(),
          },
       }
-   }
-}
-impl Copy for Engine {}
-impl Clone for Engine {
-   fn clone(&self) -> Engine {
-      *self
    }
 }

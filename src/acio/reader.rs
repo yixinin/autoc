@@ -20,7 +20,7 @@ pub fn read_file(filename: &str) -> Result<String, std::io::Error> {
     }
 }
 
-pub fn read(filename: String) -> Result<Vec<u8>, std::io::Error> {
+pub fn read(filename: &String) -> Result<Vec<u8>, std::io::Error> {
     let path = Path::new(&filename);
     // Open the path in read-only mode, returns `io::Result<File>`
     match File::open(&path) {
@@ -45,7 +45,7 @@ pub fn read(filename: String) -> Result<Vec<u8>, std::io::Error> {
     }
 }
 
-pub fn read_at(filename: String, offset: u64) -> Result<Vec<u8>, std::io::Error> {
+pub fn read_at(filename: &String, offset: u64) -> Result<Vec<u8>, std::io::Error> {
     let path = Path::new(&filename);
     // Open the path in read-only mode, returns `io::Result<File>`
     match std::fs::OpenOptions::new().read(true).open(&path) {

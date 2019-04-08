@@ -32,7 +32,7 @@ pub fn write_at(filename: String, value: &[u8], offset: u64) -> Result<(), std::
 }
 
 //追加写入
-pub fn write_append(filename: String, value: &[u8]) -> Result<(), std::io::Error> {
+pub fn write_append(filename: &String, value: &[u8]) -> Result<(), std::io::Error> {
     let path = Path::new(&filename);
     match std::fs::OpenOptions::new()
         .create(true)
