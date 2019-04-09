@@ -1,11 +1,8 @@
-pub mod acon;
-
 use crate::acio::{reader, writer};
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::collections::HashMap;
 
-use acon::Acon;
 #[derive(Debug, Clone)]
 pub struct Engine {
    pub filename: String,
@@ -59,5 +56,28 @@ impl Engine {
             Ok(value) => String::from_utf8_lossy(&value).as_ref().to_string(),
          },
       }
+   }
+
+   fn sync_to_file(&self) {
+      let mut acm = String::new();
+      for (k, v) in &self.keymap {
+         acm = format!("{}|{}|{}|", acm, k, v);
+      }
+
+      let mut buf: Vec<u8> = Vec::with_capacity(acm.len() + 8);
+
+      let lbuf = unsafe { std::mem::transmute::<usize, [u8; 8]>(self.current) };
+      for b in &lbuf {
+         buf.push(*b);
+      }
+      for b in acm.as_bytes() {
+         buf.push(*b);
+      }
+
+      writer::write(format!("{}m", self.filename), &buf).unwrap();
+   }
+   fn load_from_file(&mut self) {
+      let (off, acm) = reader::read_acm(format!("{}m", self.filename)).unwrap();
+      self.current = off;
    }
 }
