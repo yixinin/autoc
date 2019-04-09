@@ -7,6 +7,5 @@ pub fn get_filenames(dir: &str) -> Vec<String> {
     for filename in dirs {
         v.push(format!("{:?}", filename.unwrap().path()));
     }
-
     return v;
 }
