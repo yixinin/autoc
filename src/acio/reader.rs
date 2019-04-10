@@ -28,16 +28,23 @@ pub fn read_acm(filename: String) -> Result<(usize, Vec<u8>), std::io::Error> {
         // describes the error
         Err(why) => Err(why),
         Ok(mut file) => {
-            //读取数据头
+            //读取当前游标
             let mut hbuf = [0u8; 8];
             match file.read_exact(&mut hbuf) {
                 Err(e) => Err(e),
                 Ok(_) => {
-                    let size = unsafe { std::mem::transmute::<[u8; 8], usize>(hbuf) };
-                    let mut buf: Vec<u8> = Vec::with_capacity(size);
-                    match file.read_to_end(&mut buf) {
-                        Err(why) => Err(why),
-                        Ok(_) => Ok((size, buf)),
+                    //读取key长度
+                    let mut hbuf = [0u8; 8];
+                    match file.read_exact(&mut hbuf) {
+                        Err(e) => Err(e),
+                        Ok(_) => {
+                            let size = unsafe { std::mem::transmute::<[u8; 8], usize>(hbuf) };
+                            let mut buf: Vec<u8> = Vec::with_capacity(size);
+                            match file.read_to_end(&mut buf) {
+                                Err(why) => Err(why),
+                                Ok(_) => Ok((size, buf)),
+                            }
+                        }
                     }
                 }
             }

@@ -63,3 +63,8 @@ fn listen(ip:&str,port :u32){
 
     println!("Shutting down.");
 }
+
+//心跳 💓
+fn keep_alive(){
+
+}

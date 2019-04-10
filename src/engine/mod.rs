@@ -60,18 +60,30 @@ impl Engine {
 
    fn sync_to_file(&self) {
       let mut acm = String::new();
+      let mut vs: Vec<usize> = Vec::new();
       for (k, v) in &self.keymap {
-         acm = format!("{}|{}|{}|", acm, k, v);
+         acm = format!("{}|{}|", acm, k);
+         vs.push(*v);
       }
 
-      let mut buf: Vec<u8> = Vec::with_capacity(acm.len() + 8);
+      //结构 当前游标 key长度 key1|key2 value1value2
+
+      let mut buf: Vec<u8> = Vec::with_capacity(acm.len() + 16 + 8 * self.keymap.len());
 
       let lbuf = unsafe { std::mem::transmute::<usize, [u8; 8]>(self.current) };
       for b in &lbuf {
          buf.push(*b);
       }
+      let lbuf = unsafe { std::mem::transmute::<usize, [u8; 8]>(acm.len()) };
       for b in acm.as_bytes() {
          buf.push(*b);
+      }
+
+      for v in vs {
+         let lbuf = unsafe { std::mem::transmute::<usize, [u8; 8]>(v) };
+         for b in &lbuf {
+            buf.push(*b);
+         }
       }
 
       writer::write(format!("{}m", self.filename), &buf).unwrap();
